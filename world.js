@@ -49,15 +49,15 @@ const World = (function (/*api*/) {
       // with different rules affecting growth
     ];
 
-    for (let i=0; i<1000; i++) {
+    for (let i=0; i<2000; i++) {
       //console.log(client.cr);
 
-      const distance = Math.random()*100+1.5;
+      const distance = Math.random()*5*+.5;
       //console.log(client.cr, client.scalingFactor, distance);
       const angle = Math.random()*Math.PI*2;
       const x =distance*Math.cos(angle);
       const y =distance*Math.sin(angle);
-      const r = 0.5;
+      const r = 0.01;
 
       state.entities.push({x:x,y:y,r:r,value:1});
     }
@@ -89,7 +89,7 @@ const World = (function (/*api*/) {
 
     client.level=state.growth<1 ? 0 : Math.floor(Math.log10(state.growth));
     
-    const zoom = state.zoom = client.level+5;
+    const zoom = state.zoom = client.level+1;
     const scalingFactor = client.scalingFactor = 1/zoom;
     client.offsetX=client.cx*client.speed*client.cr*2*scalingFactor;
     client.offsetY=client.cy*client.speed*client.cr*2*scalingFactor;

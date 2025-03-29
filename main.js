@@ -36,10 +36,10 @@ function loop(now,state,ctx) {
   ctx.clearRect(0,0,client.width,client.height);
   //const minDim = Math.min(client.width,client.height); // one screen unit
   
-  //drawTest(state,ctx);
+  drawTest(state,ctx);
 
-  World.update(state, dt); // update entities
-  Display.draw(state, ctx); // draw entities
+  //World.update(state, dt); // update entities
+  //Display.draw(state, ctx); // draw entities
   //Buffer.flush(state); // reset buffer
   //console.log(state.canvas.width,state.canvas.height);
 
@@ -71,12 +71,12 @@ function drawDebug(state,ctx) {
 }
 
 
-function drawTest(ctx) {
+function drawTest(state, ctx) {
   //let ctx = client.ctx;
   ctx.save();
 
   // normalize coordinates
-  ctx.translate(client.width/2,client.height/2);
+  ctx.translate(client.width/2,client.height/2); // ???
 
   //ctx.scale(1,0.5); 
   // TODO: scale manually to avoid distorting the line art
@@ -84,11 +84,12 @@ function drawTest(ctx) {
   const minDim = Math.min(client.width,client.height); // one screen unit
   const cr = client.cr = minDim/2; // center radius
   const TWO_PI = 2*Math.PI;
+  const HALF_SQRT_TWO = Math.sqrt(2)/2;
 
   // fill background
   ctx.fillStyle="gray";
   ctx.fillRect(-client.width/2,-client.height/2,client.width,client.height);
-
+/*
   // draw horizon ring
   ctx.beginPath();
   ctx.lineWidth=5;
@@ -97,30 +98,29 @@ function drawTest(ctx) {
   ctx.stroke();
 
   ctx.clip();
-  
-  const polarGrids=5;
-  const cartesianGrids=5;
+  */
+  const polarGrids=50;
+  const cartesianGrids=50;
+  ctx.lineWidth = minDim/1000;// + i % 2;
 
   // draw nested rings
-  for(let i=0; i<polarGrids; i++) {
+  for(let i=0; i<polarGrids-12; i++) {
     ctx.beginPath();
-    const r = cr * i / polarGrids;
-    ctx.lineWidth = 1 + i % 2;
-    ctx.moveTo(0+r,0);
-    ctx.arc(0,0,r,0,TWO_PI);
+    const r = minDim * (i*2+1) / polarGrids;
+    ctx.moveTo(0+r/2,0);
+    ctx.arc(0,0,r/2,0,TWO_PI);
     ctx.stroke();
   }
 
   // draw nested crosses
-  for(let j=0; j<cartesianGrids; j++) {
+  for(let j=0; j<cartesianGrids-22; j++) {
     ctx.beginPath();
-    const breadth = minDim * j / cartesianGrids;
-    ctx.lineWidth = 1 + j % 2;
-    ctx.rect(-breadth/2,-cr,breadth,minDim); // tall boxes (x,Y,w,H)
-    ctx.rect(-cr,-breadth/2,minDim,breadth); // wide boxes (X,y,W,h
+    const breadth = minDim * (j*2+1) /* * HALF_SQRT_TWO */ / cartesianGrids;
+    ctx.rect(-breadth/2,-cr*1.1,breadth,minDim*1.1); // tall boxes (x,Y,w,H)
+    ctx.rect(-cr*1.1,-breadth/2,minDim*1.1,breadth); // wide boxes (X,y,W,h
     ctx.stroke();
   }
-
+/*
   // Create a linear gradient for the diagonals
   //const gradient1 = ctx.createLinearGradient(0,-cr,0,cr);
   const gradient1 = ctx.createRadialGradient(0,0,0,0,0,cr);
@@ -140,7 +140,7 @@ function drawTest(ctx) {
   //console.log(itemX,itemY,itemX+offsetX,itemY+offsetY);
   ctx.fillStyle="black";//client.abc%2===0?"black":"white";
   ctx.strokeStyle="white";
-
+*/
   const offsetX=client.offsetX=client.cx*client.speed*minDim;
   const offsetY=client.offsetY=client.cy*client.speed*minDim;
 
@@ -191,7 +191,7 @@ function drawTest(ctx) {
   ctx.stroke();
 
   ctx.restore();
-
+/*
   ctx.fillStyle="dimgray";//client.abc%2===0?"black":"white";
   ctx.fillRect(0,0,client.width,(client.height-minDim)/2);
   ctx.fillRect(0,minDim+(client.height-minDim)/2,client.width,(client.height-minDim)/2);
@@ -203,7 +203,7 @@ function drawTest(ctx) {
   ctx.strokeStyle="black";
   ctx.rect(0,0,client.width,client.height);
   ctx.stroke();
-
+/**/
 }
 
 function main() {  
@@ -212,10 +212,10 @@ function main() {
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
 
-  //canvas.style="border:1px solid #000000; image-rendering: pixelated; image-rendering: crisp-edges;";
+  canvas.style="border:1px solid #000000; image-rendering: pixelated; image-rendering: crisp-edges;";
   client.width=window.innerWidth;
   client.height=window.innerHeight;
-  client.scalingFactor= 0.2;
+  client.scalingFactor= 1;
   // make the canvas large enough to resize to fit large screens
   canvas.width=client.width;
   canvas.height=client.height;
